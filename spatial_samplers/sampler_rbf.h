@@ -84,11 +84,6 @@ public:
 	N_sp_(50),
 	pts_(pts)
 	{
-		if( !CONFIG::FIXEDPOINTS ) {
-			//EXCEPTION(std::runtime_error("Not (yet) implemented for dynamic points."));
-			std::cerr << "MUI Warning [sampler_rbf.h]: RBF not (yet) implemented for dynamic points." << std::endl;
-		}
-
 		//set s to give rbf(r)=cutoff (default 1e-9)
 		s_=std::pow(-std::log(cutoff),0.5) / r_;
 	}
@@ -402,7 +397,8 @@ private:
                         Eigen::SparseMatrix<REAL> invAA = (solver.solve(I)).sparseView(1e8);
 
                         if( CONFIG::DEBUG ) {
-                            std::cout << "#iterations:     " << solver.iterations() << ". Error: "<< solver.error()<< std::endl;
+                        	std::cout << "MUI [sampler_rbf.h]: invCss iteration count: " << solver.iterations()
+									  << "                          invCss error: " << solver.error() << std::endl;
                         }
 
                         Eigen::Matrix<REAL, Eigen::Dynamic, Eigen::Dynamic> H_i = (AB * invAA).pruned(1e8);
@@ -681,7 +677,7 @@ private:
 
                     if ((!warningSent) && (pointsCount > 120) && (n ==0)) {
                         if( !QUIET )
-							std::cout << "MUI Warning [sampler_rbf.h]: RBF search radius too large." << pointsCount << std::endl;
+                        	std::cout << "MUI Warning [sampler_rbf.h]: RBF search radius too large (No. points found " << pointsCount << ")" << std::endl;
                         warningSent = true;
                     }
 
@@ -730,7 +726,7 @@ private:
 
                     if ((!warningSent) && (pointsCount > 120) && (n ==0)) {
                     	if( !QUIET )
-							std::cout << "MUI Warning [sampler_rbf.h]: RBF search radius too large." << std::endl;
+                    		std::cout << "MUI Warning [sampler_rbf.h]: RBF search radius too large (No. points found " << pointsCount << ")" << std::endl;
                         warningSent = true;
                     }
                 }
